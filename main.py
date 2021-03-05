@@ -27,7 +27,7 @@ def check_dvmn(response):
 
 while True:
     try:
-        response = requests.get(url, headers=headers, timeout=90)
+        response = requests.get(url, headers=headers, timeout=60)
     except requests.exceptions.ReadTimeout:
         continue
     except requests.exceptions.ConnectionError:
