@@ -36,10 +36,14 @@ def handle_connection(url, headers):
     while True:
         try:
             response = requests.get(url, headers=headers, timeout=90)
+            response.raise_for_status()
         except requests.exceptions.ReadTimeout:
             continue
         except requests.exceptions.ConnectionError:
             sleep(10)
+            continue
+        except requests.exceptions.HTTPError:
+            sleep(60)
             continue
         else:
             check_dvmn(response)
