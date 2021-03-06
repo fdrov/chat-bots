@@ -18,15 +18,18 @@ def main():
 
 
 def check_dvmn(response):
-    if response.json()["status"] == "found":
-        message = 'К сожалению, в работе нашлись ошибки' if response.json()["new_attempts"][0][
-            "is_negative"] else 'Преподавателю всё понравилось, можно приступать к следующему уроку!'
-        lesson_url = parse.urljoin(response.url, response.json()["new_attempts"][0]["lesson_url"])
-        bot.send_message(chat_id=os.getenv('CHAT_ID'),
-                         text=f'У вас проверили работу «{response.json()["new_attempts"][0]["lesson_title"]}»\n' + message + lesson_url)
-        timestamp = response.json()["last_attempt_timestamp"]
-    elif response.json()["status"] == "timeout":
-        timestamp = response.json()["timestamp_to_request"]
+    dvmn_response = response.json()
+    if dvmn_response["status"] == "found":
+        attempts = dvmn_response["new_attempts"]
+        for attempt in attempts:
+            greeting_message = f'У вас проверили работу «{attempt["lesson_title"]}»\n'
+            status_message = 'К сожалению, в работе нашлись ошибки' if attempt[
+                "is_negative"] else 'Преподавателю всё понравилось, можно приступать к следующему уроку!'
+            lesson_url = parse.urljoin(response.url, attempt["lesson_url"])
+            bot.send_message(chat_id=os.getenv('CHAT_ID'), text=greeting_message + status_message + lesson_url)
+            timestamp = dvmn_response["last_attempt_timestamp"]
+    elif dvmn_response["status"] == "timeout":
+        timestamp = dvmn_response["timestamp_to_request"]
 
 
 def handle_connection(url, headers):
