@@ -5,12 +5,16 @@ from urllib import parse
 import requests
 import telegram
 from dotenv import load_dotenv
+from telegram import bot
 
-load_dotenv()
-bot = telegram.Bot(token=os.getenv('BOT_TOKEN'))
-chat_info = bot.get_chat(chat_id=os.getenv('CHAT_ID'))
-headers = {'Authorization': os.getenv('DVMN_TOKEN')}
-url = 'https://dvmn.org/api/long_polling/'
+
+def main():
+    load_dotenv()
+    bot = telegram.Bot(token=os.getenv('BOT_TOKEN'))
+    chat_info = bot.get_chat(chat_id=os.getenv('CHAT_ID'))
+    headers = {'Authorization': os.getenv('DVMN_TOKEN')}
+    url = 'https://dvmn.org/api/long_polling/'
+    handle_connection(url, headers)
 
 
 def check_dvmn(response):
@@ -25,13 +29,18 @@ def check_dvmn(response):
         timestamp = response.json()["timestamp_to_request"]
 
 
-while True:
-    try:
-        response = requests.get(url, headers=headers, timeout=90)
-    except requests.exceptions.ReadTimeout:
-        continue
-    except requests.exceptions.ConnectionError:
-        sleep(10)
-        continue
-    else:
-        check_dvmn(response)
+def handle_connection(url, headers):
+    while True:
+        try:
+            response = requests.get(url, headers=headers, timeout=90)
+        except requests.exceptions.ReadTimeout:
+            continue
+        except requests.exceptions.ConnectionError:
+            sleep(10)
+            continue
+        else:
+            check_dvmn(response)
+
+
+if __name__ == '__main__':
+    main()
