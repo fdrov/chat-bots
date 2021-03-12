@@ -23,18 +23,18 @@ def handle_dvmn_response(response):
     timestamp_to_request = None
     bot = telegram.Bot(token=os.getenv('BOT_TOKEN'))
     bot.get_chat(chat_id=os.getenv('CHAT_ID'))
-    dvmn_response = response.json()
-    if dvmn_response["status"] == "found":
-        attempts = dvmn_response["new_attempts"]
+    response_dict = response.json()
+    if response_dict["status"] == "found":
+        attempts = response_dict["new_attempts"]
         for attempt in attempts:
             greeting = f'У вас проверили работу «{attempt["lesson_title"]}»\n'
             status = 'К сожалению, в работе нашлись ошибки' if attempt[
                 "is_negative"] else 'Преподавателю всё понравилось, можно приступать к следующему уроку!'
             lesson_url = parse.urljoin(response.url, attempt["lesson_url"])
             bot.send_message(chat_id=os.getenv('CHAT_ID'), text=greeting + status + lesson_url)
-            timestamp_to_request = dvmn_response["last_attempt_timestamp"]
-    elif dvmn_response["status"] == "timeout":
-        timestamp_to_request = dvmn_response["timestamp_to_request"]
+            timestamp_to_request = response_dict["last_attempt_timestamp"]
+    elif response_dict["status"] == "timeout":
+        timestamp_to_request = response_dict["timestamp_to_request"]
     return timestamp_to_request
 
 
