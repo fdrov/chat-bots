@@ -19,7 +19,7 @@ def main():
     handle_connection(url, headers)
 
 
-def parse_dvmn_response(response):
+def handle_dvmn_response(response):
     timestamp_to_request = None
     bot = telegram.Bot(token=os.getenv('BOT_TOKEN'))
     bot.get_chat(chat_id=os.getenv('CHAT_ID'))
@@ -66,7 +66,7 @@ def handle_connection(url, headers):
             break
         else:
             logging.info('Сайт dvmn ответил')
-            payload['timestamp'] = parse_dvmn_response(response)
+            payload['timestamp'] = handle_dvmn_response(response)
             logging.debug(f'Установлен новый timestamp {payload["timestamp"]}')
 
 
