@@ -8,7 +8,8 @@ import telegram
 from dotenv import load_dotenv
 
 format = "%(asctime)-25s %(levelname)s. func:%(funcName)s %(message)s"
-logging.basicConfig(filename='app.log', filemode='w', level=logging.DEBUG, format=format)
+# logging.basicConfig(filename='app.log', filemode='w', level=logging.DEBUG, format=format)
+logging.basicConfig(level=logging.DEBUG, format=format)
 
 
 def main():
@@ -18,7 +19,7 @@ def main():
     handle_connection(url, headers)
 
 
-def check_dvmn(response):
+def parse_dvmn_response(response):
     timestamp_to_request = None
     bot = telegram.Bot(token=os.getenv('BOT_TOKEN'))
     bot.get_chat(chat_id=os.getenv('CHAT_ID'))
@@ -65,7 +66,7 @@ def handle_connection(url, headers):
             break
         else:
             logging.info('Сайт dvmn ответил')
-            payload['timestamp'] = check_dvmn(response)
+            payload['timestamp'] = parse_dvmn_response(response)
             logging.debug(f'Установлен новый timestamp {payload["timestamp"]}')
 
 
