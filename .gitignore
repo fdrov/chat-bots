@@ -324,3 +324,8 @@ pyvenv.cfg
 pip-selfcheck.json
 
 /response.txt
+/app.log.1
+/app_test.logi
+/app_test2.log.1
+/settings.py
+/test.py
