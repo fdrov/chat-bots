@@ -55,7 +55,7 @@ def handle_connection(url, headers):
     while True:
         logger.debug('Начинаю while-loop')
         try:
-            response = requests.get(url, headers=headers, params=payload, timeout=5) # TODO поставить 90 секунд в продакшене
+            response = requests.get(url, headers=headers, params=payload, timeout=90)
             logger.debug(f'Запрашиваемый адрес: {response.url}')
             response.raise_for_status()
             logger.debug('Сайт dvmn ответил')
