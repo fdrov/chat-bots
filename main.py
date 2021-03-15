@@ -55,9 +55,12 @@ def handle_connection(url, headers):
     while True:
         logger.debug('Начинаю while-loop')
         try:
-            response = requests.get(url, headers=headers, params=payload, timeout=5)
+            response = requests.get(url, headers=headers, params=payload, timeout=5) # TODO поставить 90 секунд в продакшене
             logger.debug(f'Запрашиваемый адрес: {response.url}')
             response.raise_for_status()
+            logger.debug('Сайт dvmn ответил')
+            payload['timestamp'] = handle_dvmn_response(response)
+            logger.debug(f'Установлен новый timestamp {payload["timestamp"]}')
         except requests.exceptions.ReadTimeout:
             logger.debug('TIMEOUT')
             continue
@@ -66,19 +69,10 @@ def handle_connection(url, headers):
             sleep(10)
             continue
         except requests.exceptions.HTTPError:
-            logger.debug(f'Код ответа {response.status_code}')
-            if 400 <= response.status_code <= 402:
-                print('Проверьте правильность токена сайта dvmn.org')
-            elif response.status_code == 404:
-                print('Проверьте правильность URL на который отправляется GET-запрос')
-            else:
-                print('Сервер не отвечает, попробуйте перезапустить скрипт позже')
-            print('Программа заканчивает работу')
+            logger.debug(f'HTTPError. Код ответа {response.status_code}')
+            print('Ошибка соединения, проверьте токен DVMN в настройках или попробуйте перезапустить скрипт позже. '
+                  'Программа заканчивает работу')
             break
-        else:
-            logger.info('Сайт dvmn ответил')
-            payload['timestamp'] = handle_dvmn_response(response)
-            logger.debug(f'Установлен новый timestamp {payload["timestamp"]}')
 
 
 if __name__ == '__main__':
