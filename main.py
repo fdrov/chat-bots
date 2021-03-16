@@ -31,7 +31,6 @@ def main():
 def handle_dvmn_response(response):
     timestamp_to_request = None
     bot = telegram.Bot(token=os.getenv('BOT_TOKEN'))
-    bot.get_chat(chat_id=os.getenv('CHAT_ID'))
     user_reviews = response.json()
     if user_reviews["status"] == "found":
         attempts = user_reviews["new_attempts"]
